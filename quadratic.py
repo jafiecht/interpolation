@@ -1,10 +1,13 @@
-#http://inversionlabs.com/2016/03/21/best-fit-surfaces-for-3-dimensional-data.html
+#This file creates multineighborhood slopes and curvatures
 
+#Imports
 import numpy as np
 import scipy.linalg
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 
+
+#The master function called from outside
 def slope_curvature(dem, res, window_size):
  
   #Define X and Y window datasets
@@ -23,36 +26,47 @@ def slope_curvature(dem, res, window_size):
   central_x = x[center, center]
   central_y = y[center, center]
  
+  #Define the size of the output slope/curvature arrays.
   output_size = (
     (dem.shape[0] - window_size + 1), 
     (dem.shape[1] - window_size + 1))
    
+  #Initialize the output arrays
   dem_slope = np.ones(dem.shape)
   dem_profile = np.ones(dem.shape)
   dem_plan = np.ones(dem.shape)
   dem_tangential = np.ones(dem.shape)
   
+  #This is a sliding window function. It loops over the input dem 
+  #in both axes
   i = 0
   j = 0
   for i in range(output_size[0]):
-    print(i)
+    
+    #Calculate the index to write to in the output arrays
     output_i = int(i + ((window_size+1) / 2) - 1)
+
     for j in range(output_size[1]):
+     
+      #Calculate the index to write to in the output arrays
+      output_j = int(j + ((window_size+1) / 2) - 1)
+      
+      #Cut the desired window, fit the quadratic to it, then calculate the 
+      #derivatives for the window
       window = dem[i:(i + window_size), j:(j + window_size)]
       C = fit(window, X, Y)
       slope, profile, plan, tangential = calculate(C, central_x, central_y)
-
-      output_j = int(j + ((window_size+1) / 2) - 1)
       
-      #write indices
+      #Write the vales to the output arrays
       dem_slope[output_i, output_j] = slope
       dem_profile[output_i, output_j] = profile
       dem_plan[output_i, output_j] = plan
       dem_tangential[output_i, output_j] = tangential
-      
 
   return dem_slope, dem_profile, dem_plan, dem_tangential 
- 
+
+
+#This function shapes the data and fits a OLS quadratic to it 
 def fit(z, X, Y):
   
   #format data 
@@ -63,25 +77,12 @@ def fit(z, X, Y):
   A = np.c_[np.ones(data.shape[0]), data[:,:2], np.prod(data[:,:2], axis=1), data[:,:2]**2]
   C,_,_,_ = scipy.linalg.lstsq(A, data[:,2])
 
-  #evaluate it on a grid
-  #calcZ = np.dot(np.c_[np.ones(Z.shape), X, Y, X*Y, X**2, Y**2], C).reshape(z.shape)
-  #x = X.reshape(z.shape)
-  #y = Y.reshape(z.shape)
-
-  #plot points and fitted surface with Matplotlib
-  #fig1 = plt.figure(figsize=(10,10))
-  #ax = fig1.gca(projection='3d')
-  #ax.plot_surface(x, y, calcZ, rstride=1, cstride=1, alpha=0.2)
-  #ax.scatter(data[:,0], data[:,1], data[:,2], c='r', s=50)
-  #plt.xlabel('X')
-  #plt.ylabel('Y')
-  #ax.set_zlabel('Z')
-  #ax.axis('equal')
-  #ax.axis('tight')
-  #plt.show()
-
+  #C is a list of the OLS beta coeffients
   return C
 
+
+#This function calculates the desired derivatives, 
+#given the OLS coeffiecients
 def calculate(C, x, y):
 
   #Calculate Derivatives
@@ -94,6 +95,7 @@ def calculate(C, x, y):
   #Calculate Terrain Indices
   p = (first_x)**2 + (first_y)**2
 
+  #Now use those to calculate these values
   slope = p**0.5
 
   profile = ((second_x*(first_x**2)) + (2*second_xy*first_x*first_y) + (second_y*(first_y**2))) / (p*((1+p)**(3/2)))

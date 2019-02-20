@@ -6,36 +6,32 @@ import numpy as np
 import quadratic
 import viewer
 
+#The filepaths for the input DEM and output directories
 srcfp = './DavisClipped.tif'
 outfp = './curvatures/'
 
+#Open the Raster and Extract needed data
 raster = rasterio.open(srcfp)
 elev = raster.read(1)
 meta = raster.meta.copy()
-
 resolution = meta['transform'][1]
 
+#Set the neighborhoods to generate for
 neighborhoods = [7, 21, 49]
 
-slfp = 0
-prfp = 0
-plfp = 0
-tgfp = 0
-
+#For every neighborhood size, loop through and create maps
 for neighborhood in neighborhoods:
-  print(neighborhood)
+
+  #Create output filepaths
   slfp = outfp + 'slope' + str(neighborhood) + '.tif'
   prfp = outfp + 'profile' + str(neighborhood) + '.tif'
   plfp = outfp + 'plan' + str(neighborhood) + '.tif'
   tgfp = outfp + 'tang' + str(neighborhood) + '.tif'
 
-  print(slfp)
-  print(prfp)
-  print(plfp)
-  print(tgfp)
- 
+  #Call the slope generation function, returns arrays 
   slope, profile, plan, tangential = quadratic.slope_curvature(elev, resolution, neighborhood)
 
+  #Write out the arrays as tifs
   slope_out = rasterio.open(slfp, 'w', **meta)
   slope_out.write(slope.astype(np.float32), 1)
   slope_out.close()
@@ -51,9 +47,3 @@ for neighborhood in neighborhoods:
   tang_out = rasterio.open(tgfp, 'w', **meta)
   tang_out.write(tangential.astype(np.float32), 1)
   tang_out.close()
-
-viewer.show_tif(slfp)
-viewer.show_tif(prfp)
-viewer.show_tif(plfp)
-viewer.show_tif(tgfp)
-
