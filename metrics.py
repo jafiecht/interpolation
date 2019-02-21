@@ -119,9 +119,9 @@ def generate_metrics(predicted):
   r2 = calculate_R2(y, yhat)
   rmse = calculate_RMSE(y, yhat)
   me = calculate_ME(y, yhat)
-  print('R2 Score: ' + str(r2))  
-  print('RMSE: ' + str(rmse))  
-  print('ME: ' + str(me))  
+  #print('R2 Score: ' + str(r2))  
+  #print('RMSE: ' + str(rmse))  
+  #print('ME: ' + str(me))  
   return r2, rmse, me
 
 #generate_metrics('./rf_predictions/1.tif')
