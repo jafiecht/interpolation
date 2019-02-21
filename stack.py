@@ -10,6 +10,7 @@ import shutil
 import rasterizer
 import buffers
 import recombine
+import enricher
 
 #Filepaths
 elevfp = 'rootdata/dem.tif'
@@ -20,6 +21,7 @@ slopefp = 'topo_features/slope.tif'
 curvdir = 'topo_features/curvatures/'
 bufferdir = 'buffers/'
 valuesfp = 'combined.tif'
+enrichedfp = 'enriched.tif'
 
 def return_stack(filename):
   #ex: ./train/1.shp
@@ -101,10 +103,13 @@ def return_stack(filename):
   if os.path.isfile(valuesfp): 
     os.remove(valuesfp)
   recombine.recombine()
+  if os.path.isfile(enrichedfp): 
+    os.remove(enrichedfp)
+  enricher.enrich()
 
   #Import Training Values
   ##########################
-  values_raster = rasterio.open(valuesfp)
+  values_raster = rasterio.open(enrichedfp)
   values = values_raster.read(1)
   arrays.append(values)
   

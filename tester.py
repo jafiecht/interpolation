@@ -26,8 +26,11 @@ def test(directory):
   rmse = sum(rmselist)/len(rmselist) 
   me = sum(melist)/len(melist) 
   
-  print('R2: ', r2)
-  print('RMSE: ', rmse)
-  print('ME: ', me)
+  print('\nR2: ', r2)
+  print(r2list)
+  print('\nRMSE: ', rmse)
+  print(rmselist)
+  print('\nME: ', me)
+  print(melist)
 
-test('rf_predictions/')
+#test('rf_predictions/')

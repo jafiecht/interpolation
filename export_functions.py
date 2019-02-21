@@ -49,4 +49,4 @@ def clip(filename):
   command = 'gdalwarp -cutline rootdata/davis_boudary.shp -crop_to_cutline ' + filename + " " + outpath
   os.system(command)
   os.system('rm ' + filename)
-  viewer.show_tif(outpath)
+  #viewer.show_tif(outpath)

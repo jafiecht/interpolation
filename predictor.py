@@ -13,9 +13,9 @@ from sklearn.ensemble import RandomForestRegressor
 ###############################################################
 def make_prediction(filename):
   
-  print(' *** Predictions will be made for ' + filename + ' *** \n')
+  #print(' *** Predictions will be made for ' + filename + ' *** \n')
 
-  print(' *** Reading Inputs and Creating Feature Set *** \n')
+  print('\n *** Reading Inputs and Creating Feature Set *** \n')
   
   #Call in the feature set. Returns features and template data
   raw_dataset, shape, geotrans, proj = stack.return_stack(filename)
@@ -33,7 +33,7 @@ def make_prediction(filename):
 
   print(' *** Training Regression Forest *** \n')
   #Define the regressor parameters
-  forest = RandomForestRegressor(max_depth=4, n_estimators=2000, min_samples_leaf=9)
+  forest = RandomForestRegressor(max_depth=6, n_estimators=2000, min_samples_leaf=15)
   
   #Fit the forest to the training data
   forest.fit(dataset_features, dataset_values)
