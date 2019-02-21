@@ -7,8 +7,8 @@ import numpy as np
 import os
 
 #Filepaths
-srcfp = './individuals'
-template = 'DavisClipped.tif'
+srcfp = './individuals/'
+template = './rootdata/dem.tif'
 outfp = 'combined.tif'
 
 
@@ -29,7 +29,7 @@ def recombine():
   for filename in files:
    
     #Open the input raster
-    src = srcfp + '/' + filename
+    src = srcfp + filename
     data = rasterio.open(src)
     meta = data.meta.copy()
     array = data.read(1)

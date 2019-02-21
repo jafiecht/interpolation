@@ -3,6 +3,7 @@
 import gdal
 import numpy as np
 import os
+import viewer
 
 #Script Body
 ###########################################################
@@ -45,7 +46,7 @@ def clip(filename):
   outpath = './rf_predictions/' + shortname
 
   #Clips the raster to the boundary shapefile.
-  command = 'gdalwarp -cutline davis_boudary.shp -crop_to_cutline ' + filename + " " + outpath
+  command = 'gdalwarp -cutline rootdata/davis_boudary.shp -crop_to_cutline ' + filename + " " + outpath
   os.system(command)
   os.system('rm ' + filename)
-
+  viewer.show_tif(outpath)

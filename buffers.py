@@ -8,7 +8,7 @@ import os
 
 #Filepaths to the input points and output files
 srcfp = './individuals'
-outfp = './buffers/buffer'
+outfp = './buffers/'
 
 #The function that creates the distance maps
 def make_buffers():

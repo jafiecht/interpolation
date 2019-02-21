@@ -6,7 +6,7 @@ import geopandas as gpd
 from sklearn.model_selection import KFold
 
 #Filepaths
-soilfp = './combined_soil.shp'
+soilfp = './rootdata/combined_soil.shp'
 traindir = './train/'
 testdir = './test/'
 

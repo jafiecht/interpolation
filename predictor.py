@@ -1,7 +1,8 @@
-eThis is the root script of the model. Everything is called from here
+#This is the root script of the model. Everything is called from here
 
 #Imports
 ###############################################################
+import os
 import import_functions
 import stack
 import export_functions

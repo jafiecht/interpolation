@@ -9,7 +9,7 @@ import numpy as np
 def rasterize(filename):
 
   #Filepaths
-  templatefp = "./DavisClipped.tif"
+  templatefp = "./rootdata/dem.tif"
   outfp = './individuals/'
 
   #Read in the shapefile and add a point ID column

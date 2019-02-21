@@ -7,7 +7,7 @@ import quadratic
 import viewer
 
 #The filepaths for the input DEM and output directories
-srcfp = './DavisClipped.tif'
+srcfp = './rootdata/dem.tif'
 outfp = './curvatures/'
 
 #Open the Raster and Extract needed data
