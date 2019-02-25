@@ -109,7 +109,7 @@ def return_stack(filename):
 
   #Import Training Values
   ##########################
-  values_raster = rasterio.open(enrichedfp)
+  values_raster = rasterio.open(valuesfp)
   values = values_raster.read(1)
   arrays.append(values)
   

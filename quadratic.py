@@ -32,10 +32,10 @@ def slope_curvature(dem, res, window_size):
     (dem.shape[1] - window_size + 1))
    
   #Initialize the output arrays
-  dem_slope = np.ones(dem.shape)
-  dem_profile = np.ones(dem.shape)
-  dem_plan = np.ones(dem.shape)
-  dem_tangential = np.ones(dem.shape)
+  dem_slope = np.zeros(dem.shape)
+  dem_profile = np.zeros(dem.shape)
+  dem_plan = np.zeros(dem.shape)
+  dem_tangential = np.zeros(dem.shape)
   
   #This is a sliding window function. It loops over the input dem 
   #in both axes

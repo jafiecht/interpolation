@@ -4,20 +4,27 @@
 import rasterio
 import numpy as np
 import quadratic
+import shutil
+import os
 import viewer
 
 #The filepaths for the input DEM and output directories
 srcfp = './rootdata/dem.tif'
-outfp = './curvatures/'
+outfp = './topo_features/curvatures/'
 
 #Open the Raster and Extract needed data
 raster = rasterio.open(srcfp)
 elev = raster.read(1)
 meta = raster.meta.copy()
+meta['nodata'] = 0
 resolution = meta['transform'][1]
 
 #Set the neighborhoods to generate for
 neighborhoods = [7, 21, 49]
+
+#Remove existing curvature sets and remake
+shutil.rmtree(outfp)
+os.makedirs(outfp)
 
 #For every neighborhood size, loop through and create maps
 for neighborhood in neighborhoods:
