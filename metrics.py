@@ -110,6 +110,21 @@ def calculate_ME(y, yhat):
   ME = (ME/n)
   return ME
 
+#Calculate the Mean Average Error
+def calculate_MAE(y, yhat):
+  #intialize the MSE metric
+  MAE = 0
+  #Execute for every value pair
+  n = len(yhat)
+  for i in range(n):
+    #Calculate the error and add it to the sum
+    E = abs((yhat[i] - y[i]))
+    MAE = MAE + E
+  #Find the mean error
+  MAE = (MAE/n)
+  return MAE
+
+
 
 #This function returns validatation metrics
 def generate_metrics(predicted): 
@@ -119,9 +134,10 @@ def generate_metrics(predicted):
   r2 = calculate_R2(y, yhat)
   rmse = calculate_RMSE(y, yhat)
   me = calculate_ME(y, yhat)
+  mae = calculate_MAE(y, yhat)
   #print('R2 Score: ' + str(r2))  
   #print('RMSE: ' + str(rmse))  
   #print('ME: ' + str(me))  
-  return r2, rmse, me
+  return r2, rmse, me, mae
 
 #generate_metrics('./rf_predictions/1.tif')

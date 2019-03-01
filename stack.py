@@ -37,26 +37,26 @@ def return_stack(filename):
   arrays.append(elev)
   labels.append('Elevation')
 
-  #Import Flow Accumulation
+  #Import Flow Accumulation (jk, apparently it's worthless)
   ##########################
-  flow_raster = rasterio.open(flowaccfp)
-  flow = flow_raster.read(1)
-  arrays.append(flow)
-  labels.append('Flow Accumulation')
+  #flow_raster = rasterio.open(flowaccfp)
+  #flow = flow_raster.read(1)
+  #arrays.append(flow)
+  #labels.append('Flow Accumulation')
 
-  #Import Horizontal Distance
+  #Import Horizontal Distance (worthless. Odd.)
   ##########################
-  hordist_raster = rasterio.open(hordistfp)
-  hordist = hordist_raster.read(1)
-  arrays.append(hordist)
-  labels.append('Horizontal Distance')
+  #hordist_raster = rasterio.open(hordistfp)
+  #hordist = hordist_raster.read(1)
+  #arrays.append(hordist)
+  #labels.append('Horizontal Distance')
 
-  #Import twi
+  #Import twi (apparently, also worthless)
   ##########################
-  twi_raster = rasterio.open(twifp)
-  twi = twi_raster.read(1)
-  arrays.append(twi)
-  labels.append('TWI')
+  #twi_raster = rasterio.open(twifp)
+  #twi = twi_raster.read(1)
+  #arrays.append(twi)
+  #labels.append('TWI')
 
   #Import slope
   ##########################
@@ -88,7 +88,7 @@ def return_stack(filename):
   os.makedirs('buffers')
   buffers.make_buffers()
 
-  #Import Multi-Neighborhood curvatures
+  #Import Buffer Distances
   ##########################
   bufferlist = os.listdir(bufferdir)
   for instance in bufferlist:
@@ -134,7 +134,7 @@ def return_stack(filename):
 
   #print(arrays)
   #print(labels)
-  return stack.tolist(), raster_shape, geotrans, proj
+  return stack.tolist(), raster_shape, geotrans, proj, labels
 
   
 #testStack, shape, geotransformation, projection = return_stack('./train/1.shp')

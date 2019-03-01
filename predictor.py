@@ -3,6 +3,7 @@
 #Imports
 ###############################################################
 import os
+import pandas as pd
 import import_functions
 import stack
 import export_functions
@@ -18,7 +19,7 @@ def make_prediction(filename):
   print('\n *** Reading Inputs and Creating Feature Set *** \n')
   
   #Call in the feature set. Returns features and template data
-  raw_dataset, shape, geotrans, proj = stack.return_stack(filename)
+  raw_dataset, shape, geotrans, proj, layers = stack.return_stack(filename)
 
   #Sort the known rows from the dataset into a set of training data
   dataset = import_functions.sort_dataset(raw_dataset)
@@ -38,6 +39,10 @@ def make_prediction(filename):
   #Fit the forest to the training data
   forest.fit(dataset_features, dataset_values)
   
+  #Retrieve the feature importances
+  importances = pd.DataFrame(forest.feature_importances_, index = layers, columns = ['importance']).sort_values('importance', ascending=False)
+  print(importances.to_string())
+
   print(' *** Making Predictions *** \n')
   #Feed in the raw dataset feature to predict continous values
   predictions = forest.predict(raw_dataset_features).tolist()

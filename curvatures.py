@@ -20,7 +20,7 @@ meta['nodata'] = 0
 resolution = meta['transform'][1]
 
 #Set the neighborhoods to generate for
-neighborhoods = [7, 21, 49]
+neighborhoods = [5, 25, 45, 75, 115]
 
 #Remove existing curvature sets and remake
 shutil.rmtree(outfp)
@@ -28,6 +28,7 @@ os.makedirs(outfp)
 
 #For every neighborhood size, loop through and create maps
 for neighborhood in neighborhoods:
+  print(neighborhood)
 
   #Create output filepaths
   slfp = outfp + 'slope' + str(neighborhood) + '.tif'
