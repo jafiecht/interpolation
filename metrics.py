@@ -127,8 +127,7 @@ def calculate_MAE(y, yhat):
 
 
 #This function returns validatation metrics
-def generate_metrics(predicted): 
-  values = get_pairs(predicted)
+def generate_metrics(values): 
   y = [row[0] for row in values]
   yhat = [row[1] for row in values]
   r2 = calculate_R2(y, yhat)

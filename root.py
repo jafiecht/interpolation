@@ -4,7 +4,6 @@
 #Imports
 import rasterizer
 import buffers
-import recombine
 import stack
 import predictor
 import export_functions
@@ -15,57 +14,82 @@ import os
 
 def cross_validation(filename):
 
-  #Remove existing individual points
+  ##Remove existing individual points and recreate
   #shutil.rmtree('individuals')
   #os.makedirs('individuals')
-
-  #Rasterize the shapefile
   #rasterizer.rasterize(filename)
+  point_data = stack.return_points()
 
-  #Remove existing buffer layers
+  ##Remove existing buffer layers and recreate
   #shutil.rmtree('buffers')
   #os.makedirs('buffers') 
-
-  #Create buffer layers for each point
   #buffers.make_buffers()
+  buffers = stack.return_buffers()
 
-  #Get the filename of all individual points
-  points = os.listdir('individuals')
-
-  #Define y and yhat list
-  value_pairs = list()
-
+  #Retrieve topographic layers
+  topo = stack.return_topo()
+ 
   #Run the function for each filename
-  for point in points:
-    print(point)    
+  points = list(point_data.keys())
+  value_pairs = list()
+  iteration = 0
+  length = len(points)
+  for test_point in points: 
 
     #Take the validation point out of the training set
-    training = points.copy()
-    training.remove(point)
-   
-    #Create a recombined raster, removing old raster
-    if os.path.isfile('combined.tif'):
-      os.remove('combined.tif')
-    recombine.recombine(training)
+    training_points = points.copy()
+    training_points.remove(test_point)
+    training_buffers = training_points
+ 
+    #Assemble the training set
+    training_set = list()
+    for training_point in training_points:
+      obs = list()
+      for feature in topo:
+        obs.append(feature[point_data[training_point]['index']])
+      for buffer_feature in training_buffers:
+        obs.append(buffers[buffer_feature][point_data[training_point]['index']])
+      obs.append(point_data[training_point]['value'])
+      training_set.append(obs)
 
-    #Create the stack
-    raw_dataset, raster_shape, geotrans, proj, labels = stack.return_stack(training)
-  
+    #Assemble the test set
+    testing_set = list()
+    obs = list()
+    for feature in topo:
+      obs.append(feature[point_data[test_point]['index']])
+    for buffer_feature in training_buffers:
+      obs.append(buffers[buffer_feature][point_data[test_point]['index']])
+    testing_set.append(obs)
+
     #Generate Prediction
-    #Possible Performance hack: only predict the validation point, not the whole raster
-    predictions = predictor.make_prediction(raw_dataset) 
+    prediction = predictor.train_predict(training_set, testing_set) 
     
-    #Create prediction output name
-    output_filename = 'cv' + point
-   
-    #Write Prediction out
-    export_functions.output_tif(predictions, raster_shape, geotrans, proj, output_filename)
+    value_pairs.append([point_data[test_point]['value'], prediction[0]])
+        
+    #Log Progress
+    iteration += 1
+    print(str(int(iteration/length*90)+5)+'%')
 
-    #Get y and yhat pair, append to list
-    pairs = metrics.get_pairs(point, output_filename)
-    value_pairs = value_pairs + pairs
+  r2, rmse, me, mae = metrics.generate_metrics(value_pairs)
 
-  print(value_pairs)
+  print('R2 Score: ' + str(r2))  
+  print('RMSE: ' + str(rmse))  
+  print('ME: ' + str(me))  
+  print('MAE: ' + str(mae))  
+
+  
+
+#    #Create prediction output name
+#    output_filename = 'cv' + point
+#   
+#    #Write Prediction out
+#    export_functions.output_tif(predictions, raster_shape, geotrans, proj, output_filename)
+#
+#    #Get y and yhat pair, append to list
+#    pairs = metrics.get_pairs(point, output_filename)
+#    value_pairs = value_pairs + pairs
+
+  #print(value_pairs)
 
 #Get all training filenames
 #trainlist = os.listdir('train/')

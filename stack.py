@@ -20,7 +20,50 @@ elevfp = 'rootdata/dem.tif'
 slopefp = 'topo_features/slope.tif'
 curvdir = 'topo_features/curvatures/'
 
-def return_stack(training):
+
+#This function returns a dict. with point values and location
+def return_points():
+  #Get all the files to run
+  filenames = os.listdir('individuals')
+
+  #Run for each file
+  point_data = {}  
+  for filename in filenames:
+    #Open the input raster
+    raster = rasterio.open('individuals/' + filename)
+    array = raster.read(1)
+
+    #Get the index for the min value (the datapoint)
+    flat_index = np.argmin(array)
+    index = np.unravel_index(flat_index, array.shape)
+    
+    #Write the data to the dictionary
+    key = os.path.splitext(filename)[0]
+    point_data[key] = {'index': index, 'value': array[index]}
+
+  return point_data
+
+
+#This function returns a dict. with buffer arrays
+def return_buffers():
+  #Get all the files to run
+  filenames = os.listdir('buffers')
+
+  #Run for each file
+  buffers = {}  
+  for filename in filenames:
+    #Open the input raster
+    raster = rasterio.open('buffers/' + filename)
+    array = raster.read(1)
+    
+    #Write the data to the dictionary
+    key = os.path.splitext(filename)[0]
+    buffers[key] = array
+
+  return buffers
+
+
+def return_topo():
   
   #Define stack
   arrays = list()
@@ -69,6 +112,11 @@ def return_stack(training):
     curve = curve_raster.read(1)
     arrays.append(curve)
     labels.append(os.path.splitext(instance)[0])
+
+  return arrays #, labels
+
+
+def random_stuff():
 
   #Import Buffer Distances
   ##########################
