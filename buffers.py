@@ -17,14 +17,14 @@ def make_buffers():
   files = os.listdir(srcfp)
   
   #Execute this function for every input file
-  i = 0
   for filename in files:
     
     #Generate filepaths
     src = srcfp + '/' + filename
-    tmp = 'temp' + str(i) + '.tif'
-    out = outfp + str(i) + '.tif'
-  
+    point_ID = os.path.splitext(filename)[0]
+    tmp = 'temp' + point_ID + '.tif'
+    out = outfp + point_ID + '.tif\n'
+
     #Open the input file, read data and metadata
     data = rasterio.open(src)
     meta = data.meta.copy()
@@ -47,6 +47,4 @@ def make_buffers():
     os2 = 'rm ' + tmp
     os.system(os2)
     
-    #Increment the index
-    i += 1
 

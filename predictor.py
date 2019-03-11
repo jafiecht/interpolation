@@ -12,14 +12,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 #Script Body
 ###############################################################
-def make_prediction(filename):
-  
-  #print(' *** Predictions will be made for ' + filename + ' *** \n')
-
-  print('\n *** Reading Inputs and Creating Feature Set *** \n')
-  
-  #Call in the feature set. Returns features and template data
-  raw_dataset, shape, geotrans, proj, layers = stack.return_stack(filename)
+def make_prediction(raw_dataset):
 
   #Sort the known rows from the dataset into a set of training data
   dataset = import_functions.sort_dataset(raw_dataset)
@@ -31,8 +24,6 @@ def make_prediction(filename):
   dataset_values = [row[-1] for row in dataset]
   dataset_features = [row[0:-1] for row in dataset] 
 
-
-  print(' *** Training Regression Forest *** \n')
   #Define the regressor parameters
   forest = RandomForestRegressor(max_depth=4, n_estimators=2000, min_samples_leaf=3)
   
@@ -40,23 +31,23 @@ def make_prediction(filename):
   forest.fit(dataset_features, dataset_values)
   
   #Retrieve the feature importances
-  importances = pd.DataFrame(forest.feature_importances_, index = layers, columns = ['importance']).sort_values('importance', ascending=False)
-  print(importances.to_string())
+  #importances = pd.DataFrame(forest.feature_importances_, index = layers, columns = ['importance']).sort_values('importance', ascending=False)
+  #print(importances.to_string())
 
-  print(' *** Making Predictions *** \n')
   #Feed in the raw dataset feature to predict continous values
   predictions = forest.predict(raw_dataset_features).tolist()
+
+  return predictions
  
-  print(' *** Writing Predictions to file *** \n')
+  #print(' *** Writing Predictions to file *** \n')
   #Generate the output filename
-  name = os.path.basename(filename)
-  subname = os.path.splitext(name)[0]
-  output_filename = './rf_predictions/' + 'temp' + subname + ".tif"
+  #name = os.path.basename(filename)
+  #subname = os.path.splitext(name)[0]
+  #output_filename = './rf_predictions/' + 'temp' + subname + ".tif"
 
   #Send the predictions to file 
-  export_functions.output_tif(predictions, shape, output_filename, geotrans, proj)
+  #export_functions.output_tif(predictions, shape, output_filename, geotrans, proj)
 
-  print(' *** Finished *** ')
-  return
+  #print(' *** Finished *** ')
+  #return
 
-#make_prediction('./train/1.shp')

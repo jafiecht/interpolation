@@ -7,39 +7,39 @@ from rasterio import features
 import os
 
 #Get pairs of predicted and actual values
-def get_pairs(predicted):
+def get_pairs(validation, predicted):
   
   #Filepaths
-  outfp = './temp.tif'
-  name = os.path.basename(predicted)
-  subname = os.path.splitext(name)[0]
-  testname = './test/' + subname + '.shp'
+  #outfp = './temp.tif'
+  #name = os.path.basename(predicted)
+  #subname = os.path.splitext(name)[0]
+  #testname = './test/' + subname + '.shp'
 
   #Read in the test shapefile 
-  data = gpd.read_file(testname)
+  #data = gpd.read_file(testname)
 
   #Open the template raster, read data and change nodata value
   template = rasterio.open(predicted)
   predicted_array = template.read(1)
-  meta = template.meta.copy()
-  meta['nodata'] = 9999
+  #meta = template.meta.copy()
+  #meta['nodata'] = 9999
 
   #Reproject point data to the template raster crs
-  data = data.to_crs({'init': meta['crs']['init']})
+  #data = data.to_crs({'init': meta['crs']['init']})
 
   #Rasterize the test points
-  with rasterio.open(outfp, 'w', **meta) as out:
-    out_arr = out.read(1)
+  #with rasterio.open(outfp, 'w', **meta) as out:
+    #out_arr = out.read(1)
 
     #Read the desired data and transform it.
-    shapes = ((geom, value) for geom, value in zip(data.geometry, data.OM))
-    burned = features.rasterize(shapes = shapes, fill=0, out=out_arr, transform=out.transform)
-    out.write_band(1, burned)
-    out.close()
+    #shapes = ((geom, value) for geom, value in zip(data.geometry, data.OM))
+    #burned = features.rasterize(shapes = shapes, fill=0, out=out_arr, transform=out.transform)
+    #out.write_band(1, burned)
+    #out.close()
 
   #Read the rasterized point data back in as an array
-  rasterized = rasterio.open(outfp)
-  test_array = rasterized.read(1)
+  test = rasterio.open('individuals/' + validation)
+  test_array = test.read(1)
   
   #Initialize empty list
   value_pairs = list()
@@ -53,7 +53,7 @@ def get_pairs(predicted):
         value_pairs.append(value_pair)
   
   #Remove the temporary rasterized point file.
-  os.system('rm ' + outfp)
+  #os.system('rm ' + outfp)
 
   #Give the list of y and yhat back
   return value_pairs

@@ -12,7 +12,7 @@ template = './rootdata/dem.tif'
 outfp = 'combined.tif'
 
 
-def recombine():
+def recombine(files):
 
   #Opena and use the main dem as a template
   template_raster = rasterio.open(template)
@@ -22,9 +22,6 @@ def recombine():
   #Initialize a combined array using the template shape and nodata
   combined = np.full(template_array.shape, template_meta['nodata']).astype(np.float32)
  
-  #Get a list of all the individual raster files
-  files = os.listdir(srcfp)
-   
   #Execute for all individual rasters
   for filename in files:
    

@@ -14,17 +14,13 @@ import enricher
 
 #Filepaths
 elevfp = 'rootdata/dem.tif'
-flowaccfp = 'topo_features/FlowAcc.tif'
-hordistfp = 'topo_features/hor_dist.tif'
-twifp = 'topo_features/normalized_twi.tif'
+#flowaccfp = 'topo_features/FlowAcc.tif'
+#hordistfp = 'topo_features/hor_dist.tif'
+#twifp = 'topo_features/normalized_twi.tif'
 slopefp = 'topo_features/slope.tif'
 curvdir = 'topo_features/curvatures/'
-bufferdir = 'buffers/'
-valuesfp = 'combined.tif'
-enrichedfp = 'enriched.tif'
 
-def return_stack(filename):
-  #ex: ./train/1.shp
+def return_stack(training):
   
   #Define stack
   arrays = list()
@@ -74,42 +70,17 @@ def return_stack(filename):
     arrays.append(curve)
     labels.append(os.path.splitext(instance)[0])
 
-  #Rasterize input shapefile
-  ##########################
-  #Delete any files currently in the individuals folder
-  shutil.rmtree('individuals')
-  os.makedirs('individuals')
-  rasterizer.rasterize(filename)
-
-  #Create Euclidean Distances
-  ##########################
-  #Delete any files currently in the individuals folder
-  shutil.rmtree('buffers')
-  os.makedirs('buffers')
-  buffers.make_buffers()
-
   #Import Buffer Distances
   ##########################
-  bufferlist = os.listdir(bufferdir)
-  for instance in bufferlist:
-    buffer_raster = rasterio.open(bufferdir + instance)
+  for instance in training:
+    buffer_raster = rasterio.open('buffers/' + instance)
     buffer_array = buffer_raster.read(1)
     arrays.append(buffer_array)
     labels.append('buffer ' + os.path.splitext(instance)[0])
 
-  #Create combined point raster
-  ##########################
-  #Delete any previous combined raster
-  if os.path.isfile(valuesfp): 
-    os.remove(valuesfp)
-  recombine.recombine()
-  if os.path.isfile(enrichedfp): 
-    os.remove(enrichedfp)
-  enricher.enrich()
-
   #Import Training Values
   ##########################
-  values_raster = rasterio.open(valuesfp)
+  values_raster = rasterio.open('combined.tif')
   values = values_raster.read(1)
   arrays.append(values)
   
@@ -132,13 +103,5 @@ def return_stack(filename):
   geotrans = raster.GetGeoTransform()
   proj = raster.GetProjection()
 
-  #print(arrays)
-  #print(labels)
   return stack.tolist(), raster_shape, geotrans, proj, labels
 
-  
-#testStack, shape, geotransformation, projection = return_stack('./train/1.shp')
-
-#print(testStack)
-
-  

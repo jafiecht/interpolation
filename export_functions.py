@@ -8,9 +8,11 @@ import viewer
 #Script Body
 ###########################################################
 #Transform prediction list into output tif
-def output_tif(predictions, shape, filename, geotrans, proj):
+def output_tif(predictions, shape, geotrans, proj, filename):
   prediction_list = predictions
   prediction_array = list()
+
+  unclipped_filename = 'unclipped'+filename
 
   #Reshape the predictions into the output array
   for i in range(shape[0]):
@@ -25,7 +27,7 @@ def output_tif(predictions, shape, filename, geotrans, proj):
   x_pixels = shape[1]
   y_pixels = shape[0]
   driver = gdal.GetDriverByName('GTiff')
-  dataset = driver.Create(filename, x_pixels, y_pixels, 1, gdal.GDT_Float32)
+  dataset = driver.Create(unclipped_filename, x_pixels, y_pixels, 1, gdal.GDT_Float32)
   dataset.GetRasterBand(1).WriteArray(band)
   dataset.SetGeoTransform(geotrans)
   dataset.SetProjection(proj)
@@ -33,20 +35,14 @@ def output_tif(predictions, shape, filename, geotrans, proj):
   dataset = None
 
   #Clip the new raster
-  clip(filename)
+  clip(unclipped_filename, filename)
   return
 
 
 #Clip to field boundary
-def clip(filename):
-
-  #Generate a new filepath
-  name = os.path.basename(filename)
-  shortname = name[4:]
-  outpath = './rf_predictions/' + shortname
+def clip(unclipped_filename, filename):
 
   #Clips the raster to the boundary shapefile.
-  command = 'gdalwarp -cutline rootdata/davis_boudary.shp -crop_to_cutline ' + filename + " " + outpath
+  command = 'gdalwarp -cutline rootdata/davis_boudary.shp -crop_to_cutline ' + unclipped_filename + " " + filename
   os.system(command)
-  os.system('rm ' + filename)
-  #viewer.show_tif(outpath)
+  os.system('rm ' + unclipped_filename)
