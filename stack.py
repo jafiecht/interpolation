@@ -116,40 +116,13 @@ def return_topo():
   return arrays #, labels
 
 
-def random_stuff():
-
-  #Import Buffer Distances
-  ##########################
-  for instance in training:
-    buffer_raster = rasterio.open('buffers/' + instance)
-    buffer_array = buffer_raster.read(1)
-    arrays.append(buffer_array)
-    labels.append('buffer ' + os.path.splitext(instance)[0])
-
-  #Import Training Values
-  ##########################
-  values_raster = rasterio.open('combined.tif')
-  values = values_raster.read(1)
-  arrays.append(values)
-  
-  #Transform feature arrays into 1-d lists
-  ##########################
-  raster_shape = arrays[0].shape
-  stack = np.zeros(shape=((raster_shape[0]*raster_shape[1]), len(arrays)))
-  index = 0
-  #Loop through all 3 dimensions
-  for i in range(raster_shape[0]):
-    for j in range(raster_shape[1]):
-      for array_index in range(len(arrays)):
-        #Assign values to the 2-d stack from the 3-d array set
-        stack[index, array_index] = arrays[array_index][i,j]
-      index += 1
+def template(feature_set):
 
   #Get template data
-  ##########################
+  raster_shape = feature_set[0].shape
   raster = gdal.Open(elevfp)
   geotrans = raster.GetGeoTransform()
   proj = raster.GetProjection()
 
-  return stack.tolist(), raster_shape, geotrans, proj, labels
+  return raster_shape, geotrans, proj
 

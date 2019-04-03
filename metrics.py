@@ -137,6 +137,6 @@ def generate_metrics(values):
   #print('R2 Score: ' + str(r2))  
   #print('RMSE: ' + str(rmse))  
   #print('ME: ' + str(me))  
-  return r2, rmse, me, mae
+  return [r2, rmse, me, mae]
 
 #generate_metrics('./rf_predictions/1.tif')

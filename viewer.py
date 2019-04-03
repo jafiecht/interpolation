@@ -1,6 +1,9 @@
 #this file imports a tif, then shows it.
 import gdal
 import matplotlib.pyplot as plt
+from matplotlib import cm
+
+
 
 #Load .tif file
 def show_tif(filename):
@@ -11,7 +14,7 @@ def show_tif(filename):
     #print('Band'+str(i))
     band = raster.GetRasterBand(i).ReadAsArray()
     if (i < 12):
-      plt.imshow(band)
+      plt.imshow(band, cmap = cm.Greys)
       plt.colorbar()
       plt.show()
   raster = None

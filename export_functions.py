@@ -41,6 +41,10 @@ def output_tif(predictions, shape, geotrans, proj, filename):
 
 #Clip to field boundary
 def clip(unclipped_filename, filename):
+  
+  #If the filename already exists, this will delete it
+  if os.path.exists(filename):
+    os.remove(filename)
 
   #Clips the raster to the boundary shapefile.
   command = 'gdalwarp -cutline rootdata/davis_boudary.shp -crop_to_cutline ' + unclipped_filename + " " + filename

@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 #Script Body
 ###############################################################
-def train_predict(training_set, testing_set):
+def train_predict(training_set, prediction_set):
 
 
   #Split the datasets into feature and value sets
@@ -19,7 +19,7 @@ def train_predict(training_set, testing_set):
   training_features = [row[0:-1] for row in training_set]
 
   #Define the regressor parameters
-  forest = RandomForestRegressor(max_depth=4, n_estimators=2000, min_samples_leaf=3)
+  forest = RandomForestRegressor(max_depth=4, n_estimators=2000, min_samples_leaf=3, max_features=.5)
   
   #Fit the forest to the training data
   forest.fit(training_features, training_values)
@@ -29,7 +29,7 @@ def train_predict(training_set, testing_set):
   #print(importances.to_string())
 
   #Feed in the raw dataset feature to predict continous values
-  predictions = forest.predict(testing_set)#.tolist()
+  predictions = forest.predict(prediction_set).tolist()
 
   return predictions
  
