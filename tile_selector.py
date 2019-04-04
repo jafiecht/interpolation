@@ -16,15 +16,15 @@ def getDEM(data):
   #Reproject, buffer, then project back the boundary
   #################################################################
   boundary = boundary.to_crs({'init': 'epsg:26916'})
-  boundary.to_file('rootdata/boundary.shp')
+  boundary.to_file('data/rootdata/boundary.shp')
   buffered = boundary.copy()
   buffered['geometry'] = buffered['geometry'].buffer(200)
-  buffered.to_file('rootdata/buffered_boundary.shp')
+  buffered.to_file('data/rootdata/buffered_boundary.shp')
   buffered = buffered.to_crs({'init': 'epsg:4326'})
 
   #Import the tile extent file, then convert to a geodataframe
   #################################################################
-  extents = pd.read_csv('rootdata/boundaries.csv', sep=",", header=None, names=['path', 'geometry'])
+  extents = pd.read_csv('data/rootdata/boundaries.csv', sep=",", header=None, names=['path', 'geometry'])
   extents['geometry'] = extents['geometry'].apply(json.loads)
   extents['geometry'] = extents['geometry'].apply(shapely.geometry.Polygon)
   extents = gpd.GeoDataFrame(extents, geometry='geometry') 
@@ -41,17 +41,17 @@ def getDEM(data):
   for path in paths:
     tile = requests.get(path, allow_redirects=True)
     filename = path.rsplit('/', 1)[1]
-    filenames.append('rootdata/' + filename)
-    outfile = open('rootdata/' + filename, 'wb')
+    filenames.append('data/rootdata/' + filename)
+    outfile = open('data/rootdata/' + filename, 'wb')
     outfile.write(tile.content)
     outfile.close()
 
   #Process the downloaded tiles
   #################################################################
   #Merge the tiles, then remove them
-  if os.path.isfile('rootdata/merged.tif'):
-    subprocess.call('rm rootdata/merged.tif', shell=True)
-  command = 'gdal_merge.py -o rootdata/merged.tif -of GTiff'
+  if os.path.isfile('data/rootdata/merged.tif'):
+    subprocess.call('rm data/rootdata/merged.tif', shell=True)
+  command = 'gdal_merge.py -o data/rootdata/merged.tif -of GTiff'
   for filename in filenames:
     command = command + ' ' + filename
   subprocess.call(command, shell=True)
@@ -59,16 +59,16 @@ def getDEM(data):
     subprocess.call('rm ' + filename, shell=True)
 
   #Convert to UTM 16 and remove the merged file
-  if os.path.isfile('rootdata/utm.tif'):
-    subprocess.call('rm rootdata/utm.tif', shell=True)
-  subprocess.call('gdalwarp -t_srs EPSG:26916 rootdata/merged.tif rootdata/utm.tif', shell=True)
-  subprocess.call('rm rootdata/merged.tif', shell=True)
+  if os.path.isfile('data/rootdata/utm.tif'):
+    subprocess.call('rm data/rootdata/utm.tif', shell=True)
+  subprocess.call('gdalwarp -t_srs EPSG:26916 data/rootdata/merged.tif data/rootdata/utm.tif', shell=True)
+  subprocess.call('rm data/rootdata/merged.tif', shell=True)
 
   #Clip the raster to the buffered boundary and remove the unclipped raster
-  if os.path.isfile('rootdata/dem.tif'):
-    subprocess.call('rm rootdata/dem.tif', shell=True)
-  subprocess.call('gdalwarp -cutline rootdata/buffered_boundary.shp -crop_to_cutline rootdata/utm.tif rootdata/dem.tif', shell=True)
-  subprocess.call('rm rootdata/utm.tif', shell=True)
+  if os.path.isfile('data/rootdata/elev.tif'):
+    subprocess.call('rm data/rootdata/elev.tif', shell=True)
+  subprocess.call('gdalwarp -cutline data/rootdata/buffered_boundary.shp -crop_to_cutline data/rootdata/utm.tif data/rootdata/elev.tif', shell=True)
+  subprocess.call('rm data/rootdata/utm.tif', shell=True)
 
   
 
