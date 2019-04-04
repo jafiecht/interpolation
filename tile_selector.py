@@ -41,17 +41,17 @@ def getDEM(data):
   for path in paths:
     tile = requests.get(path, allow_redirects=True)
     filename = path.rsplit('/', 1)[1]
-    filenames.append('data/rootdata/' + filename)
-    outfile = open('data/rootdata/' + filename, 'wb')
+    filenames.append('data/topo/' + filename)
+    outfile = open('data/topo/' + filename, 'wb')
     outfile.write(tile.content)
     outfile.close()
 
   #Process the downloaded tiles
   #################################################################
   #Merge the tiles, then remove them
-  if os.path.isfile('data/rootdata/merged.tif'):
-    subprocess.call('rm data/rootdata/merged.tif', shell=True)
-  command = 'gdal_merge.py -o data/rootdata/merged.tif -of GTiff'
+  if os.path.isfile('data/topo/merged.tif'):
+    subprocess.call('rm data/topo/merged.tif', shell=True)
+  command = 'gdal_merge.py -q -o data/topo/merged.tif -of GTiff'
   for filename in filenames:
     command = command + ' ' + filename
   subprocess.call(command, shell=True)
@@ -59,18 +59,15 @@ def getDEM(data):
     subprocess.call('rm ' + filename, shell=True)
 
   #Convert to UTM 16 and remove the merged file
-  if os.path.isfile('data/rootdata/utm.tif'):
-    subprocess.call('rm data/rootdata/utm.tif', shell=True)
-  subprocess.call('gdalwarp -t_srs EPSG:26916 data/rootdata/merged.tif data/rootdata/utm.tif', shell=True)
-  subprocess.call('rm data/rootdata/merged.tif', shell=True)
+  if os.path.isfile('data/topo/utm.tif'):
+    subprocess.call('rm data/topo/utm.tif', shell=True)
+  subprocess.call('gdalwarp -q -t_srs EPSG:26916 data/topo/merged.tif data/topo/utm.tif', shell=True)
+  subprocess.call('rm data/topo/merged.tif', shell=True)
 
   #Clip the raster to the buffered boundary and remove the unclipped raster
-  if os.path.isfile('data/rootdata/elev.tif'):
-    subprocess.call('rm data/rootdata/elev.tif', shell=True)
-  subprocess.call('gdalwarp -cutline data/rootdata/buffered_boundary.shp -crop_to_cutline data/rootdata/utm.tif data/rootdata/elev.tif', shell=True)
-  subprocess.call('rm data/rootdata/utm.tif', shell=True)
+  if os.path.isfile('data/topo/elev.tif'):
+    subprocess.call('rm data/topo/elev.tif', shell=True)
+  subprocess.call('gdalwarp -q -cutline data/rootdata/buffered_boundary.shp -crop_to_cutline data/topo/utm.tif data/topo/elev.tif', shell=True)
+  subprocess.call('rm data/topo/utm.tif', shell=True)
 
   
-
-
-

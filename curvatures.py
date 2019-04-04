@@ -9,8 +9,8 @@ import os
 import viewer
 
 #The filepaths for the input DEM and output directories
-srcfp = './rootdata/dem.tif'
-outfp = './topo_features/curvatures/'
+srcfp = './data/topo/elev.tif'
+outfp = './data/topo/curvatures/'
 
 #Open the Raster and Extract needed data
 raster = rasterio.open(srcfp)
@@ -20,7 +20,7 @@ meta['nodata'] = 0
 resolution = meta['transform'][1]
 
 #Set the neighborhoods to generate for
-neighborhoods = [5, 25, 45, 75, 115]
+neighborhoods = [3, 7, 25, 45, 75, 115]
 
 #Remove existing curvature sets and remake
 shutil.rmtree(outfp)

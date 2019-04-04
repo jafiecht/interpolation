@@ -17,34 +17,55 @@ import os
 import json
 
 def validate_predict(inputObject):
+   
   #Select raster tiles with field boundary
+  #############################################################
+  print(' - Downloading elevation data\n')
   tile_selector.getDEM(inputObject['boundary'])
 
   ##Remove existing individual points and recreate
+  #############################################################
+  print(' - Rasterizing point data\n')
   #shutil.rmtree('individuals')
-  #os.makedirs('individuals')
+  #os.makedirs('individuals')a
   #rasterizer.rasterize(filename)
   #point_data = stack.return_points()
 
   ##Remove existing buffer layers and recreate
+  #############################################################
+  print(' - Creating buffer layers\n')
   #shutil.rmtree('buffers')
   #os.makedirs('buffers') 
   #buffers.make_buffers()
   #buffers = stack.return_buffers()
 
   #Retrieve topographic layers
+  #############################################################
+  print(' - Assembling feature set\n')
   #topo = stack.return_topo()
 
   #Get predictions
+  #############################################################
+  print(' - Testing model\n')
   #scores = validate(point_data, topo, buffers)
 
   #Make master prediction
+  #############################################################
+  print(' - Making final prediction\n')
   #predictions = map_predictions(point_data, topo, buffers)
 
   #Get Template Data and write data out
+  #############################################################
+  print(' - Exporting prediction\n')
   #raster_shape, geotrans, proj = stack.template(topo)
   #export_functions.output_tif(predictions, raster_shape, geotrans, proj, 'rfpredictions.tif')
   
+  #############################################################
+  print(' - Deleting files\n')
+  stack.cleanup()
+  
+  #############################################################
+  print(' - Showing prediction\n')
   #viewer.show_tif('rfpredictions.tif')
   return
 

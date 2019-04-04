@@ -6,18 +6,16 @@ import rasterio
 import gdal
 import numpy as np
 import os
-#import shutil
+import shutil
 import rasterizer
 import buffers
 import recombine
 import enricher
+import subprocess
+
 
 #Filepaths
 elevfp = 'rootdata/dem.tif'
-#flowaccfp = 'topo_features/FlowAcc.tif'
-#hordistfp = 'topo_features/hor_dist.tif'
-#twifp = 'topo_features/normalized_twi.tif'
-slopefp = 'topo_features/slope.tif'
 curvdir = 'topo_features/curvatures/'
 
 
@@ -76,34 +74,6 @@ def return_topo():
   arrays.append(elev)
   labels.append('Elevation')
 
-  #Import Flow Accumulation (jk, apparently it's worthless)
-  ##########################
-  #flow_raster = rasterio.open(flowaccfp)
-  #flow = flow_raster.read(1)
-  #arrays.append(flow)
-  #labels.append('Flow Accumulation')
-
-  #Import Horizontal Distance (worthless. Odd.)
-  ##########################
-  #hordist_raster = rasterio.open(hordistfp)
-  #hordist = hordist_raster.read(1)
-  #arrays.append(hordist)
-  #labels.append('Horizontal Distance')
-
-  #Import twi (apparently, also worthless)
-  ##########################
-  #twi_raster = rasterio.open(twifp)
-  #twi = twi_raster.read(1)
-  #arrays.append(twi)
-  #labels.append('TWI')
-
-  #Import slope
-  ##########################
-  slope_raster = rasterio.open(slopefp)
-  slope = slope_raster.read(1)
-  arrays.append(slope)
-  labels.append('Local Slope')
-
   #Import Multi-Neighborhood curvatures
   ##########################
   curvlist = os.listdir(curvdir)
@@ -125,4 +95,19 @@ def template(feature_set):
   proj = raster.GetProjection()
 
   return raster_shape, geotrans, proj
+
+def cleanup():
+  if os.path.isfile('data/rootdata/boundary.shp'):
+    subprocess.call('rm data/rootdata/boundary.*', shell=True)
+  if os.path.isfile('data/rootdata/buffered_boundary.shp'):
+    subprocess.call('rm data/rootdata/buffered_boundary.*', shell=True)
+  #if os.path.isfile('data/topo/elev.tif'):
+    #subprocess.call('rm data/topo/elev.tif', shell=True)
+  #if os.path.isdir('data/topo/curvatures/'):
+    #shutil.rmtree('data/topo/curvatures')
+    #subprocess.call('mkdir data/topo/curvatures/', shell=True)
+  if os.path.isdir('data/buffers/'):
+    shutil.rmtree('data/buffers/')
+    subprocess.call('mkdir data/buffers/', shell=True)
+
 
