@@ -6,7 +6,7 @@ import rasterio
 import gdal
 import numpy as np
 import os
-import shutil
+#import shutil
 import rasterizer
 import buffers
 import recombine
