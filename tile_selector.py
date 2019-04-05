@@ -19,6 +19,8 @@ def getDEM(data):
   boundary.to_file('data/rootdata/boundary.shp')
   buffered = boundary.copy()
   buffered['geometry'] = buffered['geometry'].buffer(200)
+  buffered['geometry'] = buffered['geometry'].envelope
+  print(buffered)
   buffered.to_file('data/rootdata/buffered_boundary.shp')
   buffered = buffered.to_crs({'init': 'epsg:4326'})
 

@@ -3,6 +3,7 @@
 
 #Imports
 import tile_selector
+import curvatures
 import rasterizer
 import buffers
 import stack
@@ -14,6 +15,7 @@ import viewer
 import numpy as np
 import shutil
 import os
+import subprocess
 import json
 
 def validate_predict(inputObject):
@@ -21,14 +23,19 @@ def validate_predict(inputObject):
   #Select raster tiles with field boundary
   #############################################################
   print(' - Downloading elevation data\n')
-  tile_selector.getDEM(inputObject['boundary'])
+  #tile_selector.getDEM(inputObject['boundary'])
+
+  #Select raster tiles with field boundary
+  #############################################################
+  print(' - Calculating slopes and curvatures\n')
+  #curvatures.generate_curvatures()
 
   ##Remove existing individual points and recreate
   #############################################################
   print(' - Rasterizing point data\n')
-  #shutil.rmtree('individuals')
-  #os.makedirs('individuals')a
-  #rasterizer.rasterize(filename)
+  shutil.rmtree('data/individuals')
+  subprocess.call('mkdir data/individuals', shell=True)
+  rasterizer.rasterize(inputObject['points'])
   #point_data = stack.return_points()
 
   ##Remove existing buffer layers and recreate
@@ -62,7 +69,8 @@ def validate_predict(inputObject):
   
   #############################################################
   print(' - Deleting files\n')
-  stack.cleanup()
+  #viewer.show_tif('data/topo/elev.tif')
+  #stack.cleanup()
   
   #############################################################
   print(' - Showing prediction\n')
