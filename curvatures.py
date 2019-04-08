@@ -21,7 +21,7 @@ def generate_curvatures():
   resolution = meta['transform'][1]
   
   #Set the neighborhoods to generate for
-  neighborhoods = [3, 7, 25, 45, 75, 115]
+  neighborhoods = [3, 15, 35, 65]
   
   #Remove existing curvature sets and remake
   shutil.rmtree(outfp)
@@ -29,7 +29,7 @@ def generate_curvatures():
   
   #For every neighborhood size, loop through and create maps
   for neighborhood in neighborhoods:
-    print(neighborhood)
+    #print(neighborhood)
   
     #Create output filepaths
     slfp = outfp + 'slope' + str(neighborhood) + '.tif'

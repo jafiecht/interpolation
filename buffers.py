@@ -5,10 +5,11 @@
 import numpy as np
 import rasterio
 import os
+import subprocess
 
 #Filepaths to the input points and output files
-srcfp = './individuals'
-outfp = './buffers/'
+srcfp = 'data/individuals/'
+outfp = 'data/buffers/'
 
 #The function that creates the distance maps
 def make_buffers():
@@ -18,9 +19,9 @@ def make_buffers():
   
   #Execute this function for every input file
   for filename in files:
-    
+
     #Generate filepaths
-    src = srcfp + '/' + filename
+    src = srcfp + filename
     point_ID = os.path.splitext(filename)[0]
     tmp = 'temp' + point_ID + '.tif'
     out = outfp + point_ID + '.tif\n'
@@ -40,11 +41,12 @@ def make_buffers():
     tempfile.close()
    
     #This gdal command creates euclidean distance maps
-    os1 = 'gdal_proximity.py ' + tmp + ' ' + out
-    os.system(os1)
+    command1 = 'gdal_proximity.py -q ' + tmp + ' ' + out
+    subprocess.call(command1, shell=True)
   
     #Remove the temp file
-    os2 = 'rm ' + tmp
-    os.system(os2)
+    command2 = 'rm ' + tmp
+    subprocess.call(command2, shell=True)
     
+#make_buffers()    
 

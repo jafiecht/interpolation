@@ -47,6 +47,6 @@ def clip(unclipped_filename, filename):
     os.remove(filename)
 
   #Clips the raster to the boundary shapefile.
-  command = 'gdalwarp -cutline rootdata/davis_boudary.shp -crop_to_cutline ' + unclipped_filename + " " + filename
+  command = 'gdalwarp -q -cutline data/rootdata/boundary.shp -crop_to_cutline ' + unclipped_filename + " " + filename
   os.system(command)
   os.system('rm ' + unclipped_filename)

@@ -7,16 +7,12 @@ from matplotlib import cm
 
 #Load .tif file
 def show_tif(filename):
-  print(filename)
   raster = gdal.Open(filename)
-  for i in range(raster.RasterCount):
-    i += 1
-    #print('Band'+str(i))
-    band = raster.GetRasterBand(i).ReadAsArray()
-    if (i < 12):
-      plt.imshow(band, cmap = cm.Greys)
-      plt.colorbar()
-      plt.show()
+  band = raster.GetRasterBand(1).ReadAsArray()
+  plt.imshow(band, cmap = cm.Greys)
+  plt.colorbar()
+  plt.title(filename)
+  plt.show()
   raster = None
   return
 

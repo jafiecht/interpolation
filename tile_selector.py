@@ -7,20 +7,14 @@ import requests
 import subprocess
 import os
 
-def getDEM(data):
-  #Load the boundary data sent from the user
-  #################################################################
-  boundary = gpd.GeoDataFrame.from_features(data['features'])
-  boundary.crs = {'init': 'epsg:4326'}
+def getDEM():
 
-  #Reproject, buffer, then project back the boundary
+  #Load boundary, buffer, then reproject
   #################################################################
-  boundary = boundary.to_crs({'init': 'epsg:26916'})
-  boundary.to_file('data/rootdata/boundary.shp')
+  boundary = gpd.read_file('data/rootdata/boundary.shp')
   buffered = boundary.copy()
-  buffered['geometry'] = buffered['geometry'].buffer(200)
+  buffered['geometry'] = buffered['geometry'].buffer(125)
   buffered['geometry'] = buffered['geometry'].envelope
-  print(buffered)
   buffered.to_file('data/rootdata/buffered_boundary.shp')
   buffered = buffered.to_crs({'init': 'epsg:4326'})
 
@@ -66,10 +60,11 @@ def getDEM(data):
   subprocess.call('gdalwarp -q -t_srs EPSG:26916 data/topo/merged.tif data/topo/utm.tif', shell=True)
   subprocess.call('rm data/topo/merged.tif', shell=True)
 
-  #Clip the raster to the buffered boundary and remove the unclipped raster
+  #Clip the raster to the buffered boundary and remove the unclipped raster and buffer
   if os.path.isfile('data/topo/elev.tif'):
     subprocess.call('rm data/topo/elev.tif', shell=True)
-  subprocess.call('gdalwarp -q -cutline data/rootdata/buffered_boundary.shp -crop_to_cutline data/topo/utm.tif data/topo/elev.tif', shell=True)
+  subprocess.call('gdalwarp -q -tr 3 3 -cutline data/rootdata/buffered_boundary.shp -crop_to_cutline data/topo/utm.tif data/topo/elev.tif', shell=True)
   subprocess.call('rm data/topo/utm.tif', shell=True)
+  subprocess.call('rm data/topo/buffered_boundary.*', shell=True)
 
   
