@@ -30,12 +30,16 @@ def getDEM():
   #################################################################
   extents['intersects'] = extents['geometry'].intersects(buffered['geometry'][0])
   paths = extents.loc[(extents['intersects']==True)]['path'].tolist()
+  if len(paths) == 0:
+    return 'No elevation data available for field'
   
   #Read those files in
   #################################################################
   filenames = list()
   for path in paths:
     tile = requests.get(path, allow_redirects=True)
+    if tile.status_code != 200:
+      return 'Elevation data for field irretrievable'
     filename = path.rsplit('/', 1)[1]
     filenames.append('data/topo/' + filename)
     outfile = open('data/topo/' + filename, 'wb')
@@ -65,6 +69,5 @@ def getDEM():
     subprocess.call('rm data/topo/elev.tif', shell=True)
   subprocess.call('gdalwarp -q -tr 3 3 -cutline data/rootdata/buffered_boundary.shp -crop_to_cutline data/topo/utm.tif data/topo/elev.tif', shell=True)
   subprocess.call('rm data/topo/utm.tif', shell=True)
-  subprocess.call('rm data/topo/buffered_boundary.*', shell=True)
 
-  
+  return 'OK'  

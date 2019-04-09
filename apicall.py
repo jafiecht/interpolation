@@ -5,4 +5,6 @@ import root
 rawInput = open('data/apicall/input_object.json')
 data = json.load(rawInput)
 
-root.validate_predict(data)
+response = root.validate_predict(data)
+
+print('\n   Response: ', response)
