@@ -84,10 +84,10 @@ def validate_predict(inputObject):
   #############################################################
   print('\n - Testing model')
   start = time.time()
-  #try:
-  scores = validate(point_data, topo_data, buffer_data)
-  #except:
-    #return {'status': 500, 'message': 'Server failure while testing predictions'}
+  try:
+    scores = validate(point_data, topo_data, buffer_data)
+  except:
+    return {'status': 500, 'message': 'Server failure while testing predictions'}
   print('   Process time: ', time.time() - start)
 
   #Make master prediction
@@ -106,8 +106,8 @@ def validate_predict(inputObject):
   start = time.time()
   try:
     raster_shape, geotrans, proj = stack.template(topo_data)
-    #if os.path.isfile('rfprediction.tif'):
-      #subprocess.call('rm rfprediction.tif', shell=True)
+    if os.path.isfile('rfprediction.tif'):
+      subprocess.call('rm rfprediction.tif', shell=True)
     export_functions.output_tif(predictions, raster_shape, geotrans, proj, 'rfprediction.tif')
   except:
     return {'status': 500, 'message': 'Server failure while writing predictions to file'}
@@ -186,7 +186,7 @@ def validate(point_data, topo, buffers):
   print('     RMSE: ' + str(scores[1]))  
   print('     ME: ' + str(scores[2]))  
   print('     MAE: ' + str(scores[3]))  
-  print({'R2': scores[0], 'RMSE': scores[1], 'ME': scores[2], 'MAE': scores[3]})
+  print('   test: ', {'R2': scores[0], 'RMSE': scores[1], 'ME': scores[2], 'MAE': scores[3]})
   return {'R2': scores[0], 'RMSE': scores[1], 'ME': scores[2], 'MAE': scores[3]}
   
 

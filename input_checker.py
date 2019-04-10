@@ -72,7 +72,7 @@ def write_out(boundary, points):
 
   #Write the files out
   boundary.to_file('data/rootdata/boundary.shp')
-  boundary.to_file('data/rootdata/points.shp')
+  points.to_file('data/rootdata/points.shp')
 
 
 ###########################################################
