@@ -3,7 +3,6 @@
 import geopandas as gpd
 import rasterio
 from rasterio import features
-import matplotlib.pyplot as plt
 import numpy as np
 
 def rasterize():

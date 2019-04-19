@@ -8,12 +8,12 @@ import curvatures
 import rasterizer
 import buffers
 import stack
-import predictor
 import export_functions
 import metrics
-import tester
 import viewer
 import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
 import shutil
 import os
 import subprocess
@@ -51,11 +51,11 @@ def validate_predict(inputObject):
   #############################################################
   print('\n - Calculating slopes and curvatures')
   start = time.time()
-  try:
-    curvatures.generate_curvatures()
-    topo_data = stack.return_topo()
-  except:
-    return {'status': 500, 'message': 'Server failure while calculating topographic derivatives'}
+  #try:
+  curvatures.generate_curvatures()
+  topo_data = stack.return_topo()
+  #except:
+    #return {'status': 500, 'message': 'Server failure while calculating topographic derivatives'}
   print('   Process time: ', time.time() - start)
 
   #Create rasterize the shapefile points
@@ -171,7 +171,7 @@ def validate(point_data, topo, buffers):
 
     #Generate Prediction
     #############################################################
-    prediction = predictor.train_predict(training_set, testing_set) 
+    prediction = train_predict(training_set, testing_set) 
     
     value_pairs.append([point_data[test_point]['value'], prediction[0]])
         
@@ -230,7 +230,29 @@ def map_predictions(point_data, topo, buffers):
 
   #Generate Predictions
   #############################################################
-  predictions = predictor.train_predict(training_set, stack.tolist()) 
+  predictions = train_predict(training_set, stack.tolist()) 
   return predictions    
 
+###############################################################
+def train_predict(training_set, prediction_set):
+
+
+  #Split the datasets into feature and value sets
+  training_values = [row[-1] for row in training_set]
+  training_features = [row[0:-1] for row in training_set]
+
+  #Define the regressor parameters
+  forest = RandomForestRegressor(max_depth=4, n_estimators=2000, min_samples_leaf=3, max_features=.5)
+
+  #Fit the forest to the training data
+  forest.fit(training_features, training_values)
+
+  #Retrieve the feature importances
+  #importances = pd.DataFrame(forest.feature_importances_, index = layers, columns = ['importance']).sort_values('importance', ascending=False)
+  #print(importances.to_string())
+
+  #Feed in the raw dataset feature to predict continous values
+  predictions = forest.predict(prediction_set).tolist()
+
+  return predictions
 
