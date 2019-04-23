@@ -51,11 +51,11 @@ def validate_predict(inputObject):
   #############################################################
   print('\n - Calculating slopes and curvatures')
   start = time.time()
-  #try:
-  curvatures.generate_curvatures()
-  topo_data = stack.return_topo()
-  #except:
-    #return {'status': 500, 'message': 'Server failure while calculating topographic derivatives'}
+  try:
+    curvatures.generate_curvatures()
+    topo_data = stack.return_topo()
+  except:
+    return {'status': 500, 'message': 'Server failure while calculating topographic derivatives'}
   print('   Process time: ', time.time() - start)
 
   #Create rasterize the shapefile points
