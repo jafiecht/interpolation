@@ -21,7 +21,7 @@ def generate_curvatures():
   resolution = meta['transform'][1]
   
   #Set the neighborhoods to generate for
-  neighborhoods = [3, 15, 35, 65]
+  neighborhoods = [5, 55, 115]
   
   #Remove existing curvature sets and remake
   shutil.rmtree(outfp)
@@ -35,10 +35,11 @@ def generate_curvatures():
     slfp = outfp + 'slope' + str(neighborhood) + '.tif'
     prfp = outfp + 'profile' + str(neighborhood) + '.tif'
     plfp = outfp + 'plan' + str(neighborhood) + '.tif'
-    tgfp = outfp + 'tang' + str(neighborhood) + '.tif'
+    #tgfp = outfp + 'tang' + str(neighborhood) + '.tif'
   
     #Call the slope generation function, returns arrays 
-    slope, profile, plan, tangential = slope_curvature(elev, resolution, neighborhood)
+    slope, profile, plan = slope_curvature(elev, resolution, neighborhood)
+    #slope, profile, plan, tangential = slope_curvature(elev, resolution, neighborhood)
   
     #Write out the arrays as tifs
     slope_out = rasterio.open(slfp, 'w', **meta)
@@ -53,9 +54,9 @@ def generate_curvatures():
     plan_out.write(plan.astype(np.float32), 1)
     plan_out.close()
   
-    tang_out = rasterio.open(tgfp, 'w', **meta)
-    tang_out.write(tangential.astype(np.float32), 1)
-    tang_out.close()
+    #tang_out = rasterio.open(tgfp, 'w', **meta)
+    #tang_out.write(tangential.astype(np.float32), 1)
+    #tang_out.close()
 
 
 #########################################################################
@@ -107,15 +108,16 @@ def slope_curvature(dem, res, window_size):
       #derivatives for the window
       window = dem[i:(i + window_size), j:(j + window_size)]
       C = fit(window, X, Y)
-      slope, profile, plan, tangential = calculate(C, central_x, central_y)
+      slope, profile, plan = calculate(C, central_x, central_y)
+      #slope, profile, plan, tangential = calculate(C, central_x, central_y)
       
       #Write the vales to the output arrays
       dem_slope[output_i, output_j] = slope
       dem_profile[output_i, output_j] = profile
       dem_plan[output_i, output_j] = plan
-      dem_tangential[output_i, output_j] = tangential
+      #dem_tangential[output_i, output_j] = tangential
 
-  return dem_slope, dem_profile, dem_plan, dem_tangential 
+  return dem_slope, dem_profile, dem_plan#, dem_tangential 
 
 
 #########################################################################
@@ -156,9 +158,9 @@ def calculate(C, x, y):
 
   plan = ((second_x*(first_x**2)) - (2*second_xy*first_x*first_y) + (second_y*(first_y**2))) / (p**(3/2))
   
-  tangential = ((second_x*(first_x**2)) - (2*second_xy*first_x*first_y) + (second_y*(first_y**2))) / (p*((1+p)**(1/2)))
+  #tangential = ((second_x*(first_x**2)) - (2*second_xy*first_x*first_y) + (second_y*(first_y**2))) / (p*((1+p)**(1/2)))
 
-  return slope, profile, plan, tangential
+  return slope, profile, plan#, tangential
 
 
 

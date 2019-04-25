@@ -92,11 +92,11 @@ def cleanup():
     subprocess.call('rm data/rootdata/boundary.*', shell=True)
   if os.path.isfile('data/rootdata/buffered_boundary.shp'):
     subprocess.call('rm data/rootdata/buffered_boundary.*', shell=True)
-  if os.path.isfile('data/topo/elev.tif'):
-    subprocess.call('rm data/topo/elev.tif', shell=True)
-  if os.path.isdir('data/topo/curvatures/'):
-    shutil.rmtree('data/topo/curvatures')
-    subprocess.call('mkdir data/topo/curvatures/', shell=True)
+  #if os.path.isfile('data/topo/elev.tif'):
+    #subprocess.call('rm data/topo/elev.tif', shell=True)
+  #if os.path.isdir('data/topo/curvatures/'):
+    #shutil.rmtree('data/topo/curvatures')
+    #subprocess.call('mkdir data/topo/curvatures/', shell=True)
   if os.path.isdir('data/buffers/'):
     shutil.rmtree('data/buffers/')
     subprocess.call('mkdir data/buffers/', shell=True)

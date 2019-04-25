@@ -16,4 +16,4 @@ def show_tif(filename):
   raster = None
   return
 
-
+show_tif('rfprediction.tif')

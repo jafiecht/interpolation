@@ -67,7 +67,8 @@ def getDEM():
   #Clip the raster to the buffered boundary and remove the unclipped raster and buffer
   if os.path.isfile('data/topo/elev.tif'):
     subprocess.call('rm data/topo/elev.tif', shell=True)
-  subprocess.call('gdalwarp -q -tr 3 3 -cutline data/rootdata/buffered_boundary.shp -crop_to_cutline data/topo/utm.tif data/topo/elev.tif', shell=True)
+  #subprocess.call('gdalwarp -q -tr 3 3 -cutline data/rootdata/buffered_boundary.shp -crop_to_cutline data/topo/utm.tif data/topo/elev.tif', shell=True)
+  subprocess.call('gdalwarp -q -cutline data/rootdata/buffered_boundary.shp -crop_to_cutline data/topo/utm.tif data/topo/elev.tif', shell=True)
   subprocess.call('rm data/topo/utm.tif', shell=True)
 
   return 'OK'  
